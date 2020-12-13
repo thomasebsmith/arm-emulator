@@ -20,19 +20,19 @@ DEBUG_OBJ_DIRS=$(foreach dir,$(SRC_DIRS) $(MAIN_DIRS),$(DEBUG_OBJ_DIR)/$(dir))
 RELEASE_OBJ_DIRS=$(foreach dir,$(SRC_DIRS) $(MAIN_DIRS),$(RELEASE_OBJ_DIR)/$(dir))
 
 DEBUG_SRC_OBJ_FILES=$(foreach dir,$(SRC_DIRS),\
-					$(DEBUG_OBJ_DIR)/$(dir)/$(patsubst \
-					%.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp))))
+				$(addprefix $(DEBUG_OBJ_DIR)/$(dir)/,\
+				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
 DEBUG_MAIN_OBJ_FILES=$(foreach dir,$(MAIN_DIRS),\
-				$(DEBUG_OBJ_DIR)/$(dir)/$(patsubst \
-				%.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp))))
+				$(addprefix $(DEBUG_OBJ_DIR)/$(dir)/,\
+				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
 DEBUG_OBJ_FILES=$(DEBUG_SRC_OBJ_FILES) $(DEBUG_MAIN_OBJ_FILES)
 
 RELEASE_SRC_OBJ_FILES=$(foreach dir,$(SRC_DIRS),\
-					$(RELEASE_OBJ_DIR)/$(dir)/$(patsubst \
-					%.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp))))
+				$(addprefix $(RELEASE_OBJ_DIR)/$(dir)/,\
+				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
 RELEASE_MAIN_OBJ_FILES=$(foreach dir,$(MAIN_DIRS),\
-				$(RELEASE_OBJ_DIR)/$(dir)/$(patsubst \
-				%.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp))))
+				$(addprefix $(RELEASE_OBJ_DIR)/$(dir)/,\
+				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
 RELEASE_OBJ_FILES=$(RELEASE_SRC_OBJ_FILES) $(RELEASE_MAIN_OBJ_FILES)
 
 # Compiler commands/flags
