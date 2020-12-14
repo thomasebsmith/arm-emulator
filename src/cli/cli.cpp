@@ -36,7 +36,9 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
           option.shortcut,
           option.full_name
         }).second) {
-          throw ParseException(std::string("Repeated option shortcut ") + option.shortcut);
+          throw ParseException(
+            std::string("Repeated option shortcut ") + option.shortcut
+          );
         }
       }
       else {
@@ -70,6 +72,19 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
         }
         if (!flags.emplace(std::move(flag_name)).second) {
           throw ParseException("Repeated flag " + argument);
+        }
+      }
+      else {
+        // Option begins with -
+        for (size_t i = 1; i < argument.length(); ++i) {
+          char shortcut = argument[i];
+          auto it = flag_shortcuts.find(shortcut);
+          if (it == flag_shortcuts.end()) {
+            throw ParseException(std::string("Unknown flag -") + shortcut);
+          }
+          if (!flags.insert(it->second).second) {
+            throw ParseException("Repeated flag --" + it->second);
+          }
         }
       }
     }
