@@ -8,6 +8,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -16,17 +17,17 @@ namespace CLI {
   public:
 
     struct Argument {
-      const std::string internal_name;
-      const std::string help_name;
-      const std::string description;
+      std::string internal_name;
+      std::string help_name;
+      std::string description;
 
       Argument() = delete;
     };
 
     struct Flag {
       char shortcut;
-      const std::string full_name;
-      const std::string description;
+      std::string full_name;
+      std::string description;
 
       Flag() = delete;
     };
@@ -43,13 +44,14 @@ namespace CLI {
     bool has_flag(const std::string &full_name);
 
     std::optional<std::string_view> get_argument(
-      const std::string_view internal_name
+      const std::string &internal_name
     );
 
     std::ostream &show_help(std::ostream &out);
 
   private:
-    std::vector<Argument> possible_arguments;
+    std::unordered_map<std::string, std::pair<Argument, size_t>>
+      possible_arguments;
     std::unordered_map<char, std::string> flag_shortcuts;
     std::unordered_map<std::string, Flag> possible_flags;
     std::string program_name;

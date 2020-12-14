@@ -26,7 +26,12 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
     std::visit([=](auto &&option) {
       using OptionT = std::decay_t<decltype(option)>;
       if constexpr (std::is_same_v<OptionT, Argument>) {
-        possible_arguments.push_back(option);
+        if (!possible_arguments.insert({
+            option.internal_name,
+            {option, possible_arguments.size()}
+          }).second) {
+          throw ParseException("Repeated argument " + option.internal_name);
+        }
       }
       else if constexpr (std::is_same_v<OptionT, Flag>) {
         if (!possible_flags.insert({option.full_name, option}).second) {
@@ -96,10 +101,17 @@ bool CLI::CLI::has_flag(const std::string &full_name) {
 }
 
 std::optional<std::string_view> CLI::CLI::get_argument(
-  const std::string_view internal_name
+  const std::string &internal_name
 ) {
-  (void) internal_name;
-  throw ParseException("This is not yet implemented.");
+  auto it = possible_arguments.find(internal_name);
+  if (it == possible_arguments.end()) {
+    return std::nullopt;
+  }
+  auto argument_index = it->second.second;
+  if (argument_index >= arguments.size()) {
+    return std::nullopt;
+  }
+  return arguments[argument_index];
 }
 
 std::ostream &CLI::CLI::show_help(std::ostream &out) {
