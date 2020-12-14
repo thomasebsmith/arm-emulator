@@ -76,9 +76,8 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
   }
 }
 
-bool CLI::CLI::has_flag(const std::string_view full_name) {
-  (void) full_name;
-  throw ParseException("This is not yet implemented.");
+bool CLI::CLI::has_flag(const std::string &full_name) {
+  return flags.find(full_name) != flags.end();
 }
 
 std::optional<std::string_view> CLI::CLI::get_argument(

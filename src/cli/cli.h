@@ -40,7 +40,7 @@ namespace CLI {
 
     CLI(int argc, char *argv[], const std::vector<Option> &options);
 
-    bool has_flag(const std::string_view full_name);
+    bool has_flag(const std::string &full_name);
 
     std::optional<std::string_view> get_argument(
       const std::string_view internal_name
