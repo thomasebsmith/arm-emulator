@@ -2,6 +2,7 @@
 #define __SRC_CLI_CLI_H__
 
 #include <iostream>
+#include <map>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -50,10 +51,9 @@ namespace CLI {
     std::ostream &show_help(std::ostream &out);
 
   private:
-    std::unordered_map<std::string, std::pair<Argument, size_t>>
-      possible_arguments;
+    std::map<std::string, std::pair<Argument, size_t>> possible_arguments;
     std::unordered_map<char, std::string> flag_shortcuts;
-    std::unordered_map<std::string, Flag> possible_flags;
+    std::map<std::string, Flag> possible_flags;
     std::string program_name;
     std::vector<std::string> arguments;
     std::unordered_set<std::string> flags;

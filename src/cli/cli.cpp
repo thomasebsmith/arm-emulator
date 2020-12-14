@@ -22,6 +22,8 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
     throw ParseException("No program name given");
   }
 
+  program_name = argv[0];
+
   for (const auto &option_variant : options) {
     std::visit([=](auto &&option) {
       using OptionT = std::decay_t<decltype(option)>;
@@ -115,7 +117,22 @@ std::optional<std::string_view> CLI::CLI::get_argument(
 }
 
 std::ostream &CLI::CLI::show_help(std::ostream &out) {
-  // TODO
-  out << "Help here.\n";
+  out << "Usage: " << program_name;
+  for (const auto &pair : possible_flags) {
+    out << " [--" << pair.first << ']';
+  }
+  for (const auto &pair : possible_arguments) {
+    out << " [" << pair.second.first.help_name << ']';
+  }
+  out << '\n';
+  for (const auto &pair : possible_flags) {
+    const auto &flag = pair.second;
+    out << "\t--" << flag.full_name << ", -" << flag.shortcut << ": ";
+    out << flag.description << '\n';
+  }
+  for (const auto &pair : possible_arguments) {
+    const auto &argument = pair.second.first;
+    out << '\t' << argument.help_name << ": " << argument.description << '\n';
+  }
   return out;
 }
