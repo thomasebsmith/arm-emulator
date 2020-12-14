@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <unordered_set>
 #include <variant>
 #include <vector>
 
@@ -14,22 +16,22 @@ namespace CLI {
   public:
 
     struct Argument {
-      const std::string_view internal_name;
-      const std::string_view help_name;
-      const std::string_view description;
+      const std::string internal_name;
+      const std::string help_name;
+      const std::string description;
 
       Argument() = delete;
     };
 
     struct Flag {
       char shortcut;
-      const std::string_view full_name;
-      const std::string_view description;
+      const std::string full_name;
+      const std::string description;
 
       Flag() = delete;
     };
 
-    class ParseException: std::runtime_error {
+    class ParseException: public std::runtime_error {
     public:
       ParseException(const std::string &error_message);
     };
@@ -47,6 +49,12 @@ namespace CLI {
     std::ostream &show_help(std::ostream &out);
 
   private:
+    std::vector<Argument> possible_arguments;
+    std::unordered_map<char, std::string> flag_shortcuts;
+    std::unordered_map<std::string, Flag> possible_flags;
+    std::string program_name;
+    std::vector<std::string> arguments;
+    std::unordered_set<std::string> flags;
   };
 };
 
