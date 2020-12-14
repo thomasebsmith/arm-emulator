@@ -41,6 +41,22 @@ CC_FLAGS=-Wall -Wconversion -Werror -pedantic -std=c++17 -iquote $(SRC_ROOT)
 CC_FLAGS_DEBUG=-g3
 CC_FLAGS_RELEASE=-O3
 
+# Functions
+debug_object=$(DEBUG_OBJ_DIR)/$(1:.cpp=.o)
+release_object=$(RELEASE_OBJ_DIR)/$(1:.cpp=.o)
+all_objects=$(call debug_object,$(1)) $(call release_object,$(1))
+
+# Header file dependencies
+$(call all_objects,main/disassembler/disassemble.cpp):\
+	main/disassembler/disassemble.h
+
+$(call all_objects,main/disassembler/main.cpp):\
+	src/cli/cli.h src/meta/program_info.h main/disassembler/disassemble.h
+
+$(call all_objects,src/cli/cli.cpp): src/cli/cli.h
+
+$(call all_objects,src/meta/program_info.cpp): src/meta/program_info.h
+
 # Rules
 .DEFAULT: debug
 
