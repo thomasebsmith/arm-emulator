@@ -1,5 +1,5 @@
-#ifndef __SRC_CLI_CLI_H__
-#define __SRC_CLI_CLI_H__
+#ifndef __SRC_CLI_CLI_PARSER_H__
+#define __SRC_CLI_CLI_PARSER_H__
 
 #include <iostream>
 #include <map>

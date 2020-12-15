@@ -1,7 +1,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include "cli/cli.h"
+#include "cli/cli_parser.h"
 #include "meta/program_info.h"
 #include "disassemble.h"
 
