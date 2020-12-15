@@ -13,11 +13,17 @@
 template <typename T>
 constexpr bool false_v = false;
 
-CLI::CLI::ParseException::ParseException(const std::string &error_message):
+CLI::CLIParser::ParseException::ParseException(
+  const std::string &error_message
+):
   std::runtime_error{error_message}
 {}
 
-CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
+CLI::CLIParser::CLIParser(
+  int argc,
+  char *argv[],
+  const std::vector<Option> &options
+) {
   if (argc == 0) {
     throw ParseException("No program name given");
   }
@@ -98,11 +104,11 @@ CLI::CLI::CLI(int argc, char *argv[], const std::vector<Option> &options) {
   }
 }
 
-bool CLI::CLI::has_flag(const std::string &full_name) {
+bool CLI::CLIParser::has_flag(const std::string &full_name) {
   return flags.find(full_name) != flags.end();
 }
 
-std::optional<std::string_view> CLI::CLI::get_argument(
+std::optional<std::string_view> CLI::CLIParser::get_argument(
   const std::string &internal_name
 ) {
   auto it = possible_arguments.find(internal_name);
@@ -116,7 +122,7 @@ std::optional<std::string_view> CLI::CLI::get_argument(
   return arguments[argument_index];
 }
 
-std::ostream &CLI::CLI::show_help(std::ostream &out) {
+std::ostream &CLI::CLIParser::show_help(std::ostream &out) {
   out << "Usage: " << program_name;
   for (const auto &pair : possible_flags) {
     out << " [--" << pair.first << ']';

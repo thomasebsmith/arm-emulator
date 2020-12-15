@@ -5,12 +5,14 @@
 #include "meta/program_info.h"
 #include "disassemble.h"
 
+using CLI::CLIParser;
+
 int main(int argc, char *argv[]) {
   try {
-    CLI::CLI cli{argc, argv, {
-      CLI::CLI::Flag{'h', "help", "Show help" },
-      CLI::CLI::Flag{'v', "version", "Show version information"},
-      CLI::CLI::Argument{"input_file", "file", "Get machine code from <file>"}
+    CLIParser cli{argc, argv, {
+      CLIParser::Flag{'h', "help", "Show help" },
+      CLIParser::Flag{'v', "version", "Show version information"},
+      CLIParser::Argument{"input_file", "file", "Get machine code from <file>"}
     }};
 
     if (cli.has_flag("help")) {
@@ -35,7 +37,7 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  catch (CLI::CLI::ParseException &error) {
+  catch (CLIParser::ParseException &error) {
     std::cerr << error.what() << '\n';
     std::cerr << "Use --help for more information about using this program.\n";
     return 1;

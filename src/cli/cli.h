@@ -14,7 +14,7 @@
 #include <vector>
 
 namespace CLI {
-  class CLI {
+  class CLIParser {
   public:
 
     struct Argument {
@@ -40,7 +40,7 @@ namespace CLI {
 
     using Option = std::variant<Argument, Flag>;
 
-    CLI(int argc, char *argv[], const std::vector<Option> &options);
+    CLIParser(int argc, char *argv[], const std::vector<Option> &options);
 
     bool has_flag(const std::string &full_name);
 
