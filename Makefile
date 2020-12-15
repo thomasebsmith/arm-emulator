@@ -48,12 +48,15 @@ all_objects=$(call debug_object,$(1)) $(call release_object,$(1))
 
 # Header file dependencies
 $(call all_objects,main/disassembler/disassemble.cpp):\
-	main/disassembler/disassemble.h
+	main/disassembler/disassemble.h src/disassemble/disassembler.h
 
 $(call all_objects,main/disassembler/main.cpp):\
 	src/cli/cli_parser.h src/meta/program_info.h main/disassembler/disassemble.h
 
 $(call all_objects,src/cli/cli_parser.cpp): src/cli/cli_parser.h
+
+$(call all_objects,src/disassemble/disassembler.cpp):\
+	src/disassemble/disassembler.h
 
 $(call all_objects,src/meta/program_info.cpp): src/meta/program_info.h
 
