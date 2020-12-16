@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     }
     else {
       if (auto file_name = cli.get_argument("input_file")) {
-        std::ifstream input_file{*file_name};
+        std::ifstream input_file{*file_name, std::ios::binary | std::ios::in};
         if (!input_file) {
           std::cerr << "Could not read file " << *file_name << ".\n";
           return 1;

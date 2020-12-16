@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "program.h"
 
 namespace Disassemble {
   class Disassembler {
@@ -18,6 +19,7 @@ namespace Disassemble {
     };
   private:
     std::istream &in;
+    Program program;
   };
 
   std::ostream &operator<<(std::ostream &out, Disassembler &disassembler);

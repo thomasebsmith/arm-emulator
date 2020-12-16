@@ -56,7 +56,17 @@ $(call all_objects,main/disassembler/main.cpp):\
 $(call all_objects,src/cli/cli_parser.cpp): src/cli/cli_parser.h
 
 $(call all_objects,src/disassemble/disassembler.cpp):\
-	src/disassemble/disassembler.h
+	src/disassemble/disassembler.h src/disassemble/program.h
+
+src/disassemble/disassembler.h: src/disassemble/program.h
+
+$(call all_objects,src/disassemble/program.cpp):\
+	src/disassemble/program.h
+
+src/disassemble/program.h: src/instructions/instruction.h
+
+$(call all_objects,src/instructions/instruction.cpp):\
+	src/instructions/instruction.h
 
 $(call all_objects,src/meta/program_info.cpp): src/meta/program_info.h
 
