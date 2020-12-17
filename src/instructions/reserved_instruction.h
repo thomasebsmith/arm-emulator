@@ -9,6 +9,11 @@ namespace Instructions {
   public:
     ReservedInstruction(IntegerType inst);
     void print_to(std::ostream &out) const;
+  private:
+    enum class Type {
+      UDF
+    };
+    Type type;
   };
 }
 

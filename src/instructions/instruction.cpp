@@ -10,8 +10,8 @@ namespace Instructions {
     internal_instruction{decode(inst)} {}
 
   Instruction::InternalInstructionT Instruction::decode(IntegerType inst) {
-    const unsigned opcode_offset = 28;
-    auto opcode = inst >> opcode_offset;
+    const unsigned opcode_offset = 25;
+    auto opcode = (inst >> opcode_offset) & 0b1111;
     switch (opcode) {
       case 0b0000:
         return ReservedInstruction(inst);

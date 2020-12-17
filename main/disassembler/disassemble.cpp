@@ -14,4 +14,8 @@ int disassemble(std::istream &in, std::ostream &out, std::ostream &out_err) {
     out_err << err.what() << '\n';
     return 1;
   }
+  catch (Disassembler::DecodeException &err) {
+    out_err << err.what() << '\n';
+    return 1;
+  }
 }

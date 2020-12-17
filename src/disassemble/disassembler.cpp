@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "disassembler.h"
 #include "program.h"
+#include "utils/bit_utils.h"
 
 
 namespace Disassemble {
@@ -13,6 +14,7 @@ namespace Disassemble {
       reinterpret_cast<char *>(&inst),
       sizeof(Program::InstructionType)
     )) {
+      inst = Utils::BitUtils::convert_endianness(inst);
       program.add_instruction(inst);
     }
     program.print_to(out);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "instructions/decode_exception.h"
 #include "program.h"
 
 namespace Disassemble {
@@ -12,6 +13,8 @@ namespace Disassemble {
     Disassembler(std::istream &machine_code);
 
     void print_to(std::ostream &out);
+
+    using DecodeException = Instructions::DecodeException;
 
     class ParseException: public std::runtime_error {
     public:
