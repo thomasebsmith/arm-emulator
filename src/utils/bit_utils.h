@@ -44,7 +44,7 @@ namespace Utils::BitUtils {
       std::is_unsigned_v<U>,
       "Cannot extract bits using signed offsets"
     );
-    assert(next_offset > offset && "Successive offsets musts increase");
+    assert(next_offset > offset && "Successive offsets must increase");
     auto result = (
       (data >> offset) &
       ~(~static_cast<T>(0) << (next_offset - offset))
