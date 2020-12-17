@@ -35,9 +35,12 @@ RELEASE_MAIN_OBJ_FILES=$(foreach dir,$(MAIN_DIRS),\
 				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
 RELEASE_OBJ_FILES=$(RELEASE_SRC_OBJ_FILES) $(RELEASE_MAIN_OBJ_FILES)
 
+ALL_OBJ_FILES=$(DEBUG_OBJ_FILES) $(RELEASE_OBJ_FILES)
+
 # Compiler commands/flags
 CC=g++
-CC_FLAGS=-Wall -Wconversion -Werror -pedantic -std=c++17 -iquote $(SRC_ROOT)
+CC_FLAGS=-Wall -Wconversion -Werror -pedantic -std=c++17 -MMD\
+		 -iquote $(SRC_ROOT)
 CC_FLAGS_DEBUG=-g3
 CC_FLAGS_RELEASE=-O3
 
@@ -47,86 +50,8 @@ release_object=$(RELEASE_OBJ_DIR)/$(1:.cpp=.o)
 all_objects=$(call debug_object,$(1)) $(call release_object,$(1))
 
 # Header file dependencies
-$(call all_objects,main/disassembler/disassemble.cpp):\
-	main/disassembler/disassemble.h src/disassemble/disassembler.h
-
-$(call all_objects,main/disassembler/main.cpp):\
-	src/cli/cli_parser.h src/meta/program_info.h main/disassembler/disassemble.h
-
-$(call all_objects,src/cli/cli_parser.cpp): src/cli/cli_parser.h
-
-$(call all_objects,src/disassemble/disassembler.cpp):\
-	src/disassemble/disassembler.h src/disassemble/program.h
-
-src/disassemble/disassembler.h: src/disassemble/program.h
-
-$(call all_objects,src/disassemble/program.cpp):\
-	src/disassemble/program.h
-
-src/disassemble/program.h: src/instructions/instruction.h
-
-$(call all_objects,src/instructions/decode_exception.cpp):\
-	src/instructions/decode_exception.h
-
-$(call all_objects,src/instructions/instruction.cpp):\
-	src/instructions/instruction.h src/instructions/decode_exception.h\
-	src/instructions/shared.h
-
-$(call all_objects,\
-	src/instructions/branch_exception_or_system_instruction.cpp):\
-	src/instructions/branch_exception_or_system_instruction.h
-
-src/instructions/branch_exception_or_system_instruction.h:\
-	src/instructions/shared.h
-
-$(call all_objects,src/instructions/data_processing_advanced_instruction.cpp):\
-	src/instructions/data_processing_advanced_instruction.h
-
-src/instructions/data_processing_advanced_instruction.h:\
-	src/instructions/shared.h
-
-$(call all_objects,\
-	src/instructions/data_processing_immediate_instruction.cpp):\
-	src/instructions/data_processing_immediate_instruction.h
-
-src/instructions/data_processing_immediate_instruction.h:\
-	src/instructions/shared.h
-
-$(call all_objects,src/instructions/data_processing_register_instruction.cpp):\
-	src/instructions/data_processing_register_instruction.h
-
-src/instructions/data_processing_register_instruction.h:\
-	src/instructions/shared.h
-
-$(call all_objects,src/instructions/decode_exception.cpp):\
-	src/instructions/decode_exception.h
-
-src/instructions/instruction.h:\
-	src/instructions/branch_exception_or_system_instruction.h\
-	src/instructions/data_processing_immediate_instruction.h\
-	src/instructions/data_processing_register_instruction.h\
-	src/instructions/data_processing_advanced_instruction.h\
-	src/instructions/load_or_store_instruction.h\
-	src/instructions/reserved_instruction.h\
-	src/instructions/shared.h\
-	src/instructions/sve_instruction.h
-
-$(call all_objects,src/instructions/load_or_store_instruction.cpp):\
-	src/instructions/load_or_store_instruction.h
-
-src/instructions/load_or_store_instruction.h: src/instructions/shared.h
-
-$(call all_objects,src/instructions/reserved_instruction.cpp):\
-	src/instructions/reserved_instruction.h
-
-src/instructions/reserved_instruction.h: src/instructions/shared.h
-
-$(call all_objects,src/instructions/sve_instruction.cpp):\
-	src/instructions/sve_instruction.h
-
-src/instructions/sve_instruction.h: src/instructions/shared.h
-
-$(call all_objects,src/meta/program_info.cpp): src/meta/program_info.h
+GENERATED_HEADER_DEPENDENCIES=$(ALL_OBJ_FILES:.o=.d)
+-include $(GENERATED_HEADER_DEPENDENCIES)
 
 # Rules
 .DEFAULT: debug
@@ -170,8 +95,8 @@ DEBUG_OBJS=$(addprefix $(DEBUG_OBJ_DIR)/$(MAIN_ROOT)/$(TARGET_NAME)/,\
 RELEASE_OBJS=$(addprefix $(RELEASE_OBJ_DIR)/$(MAIN_ROOT)/$(TARGET_NAME)/,\
 			 $(SOURCE_NAMES)) $(RELEASE_SRC_OBJ_FILES)
 
-$(DEBUG_DIR)/%: $$(DEBUG_OBJS) | $(DEBUG_DIR)
+$(DEBUG_TARGETS): $$(DEBUG_OBJS) | $(DEBUG_DIR)
 	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) $(DEBUG_OBJS) -o $@
 
-$(RELEASE_DIR)/%: $$(RELEASE_OBJS) | $(RELEASE_DIR)
+$(RELEASE_TARGETS): $$(RELEASE_OBJS) | $(RELEASE_DIR)
 	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) $(RELEASE_OBJS) -o $@

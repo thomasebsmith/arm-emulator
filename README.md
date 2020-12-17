@@ -3,9 +3,14 @@ This is a lightweight ARM emulator written in cross-platform C++.
 Incidentally, this project also includes an ARM disassembler; however,
 the disassembler is not designed to produce human-friendly output.
 
-## Prerequisites
+## Build Prerequisites
  - GNU Make
- - `g++` or an equivalent (e.g. Clang) that supports C++17
+ - `g++` or an equivalent (e.g. Clang) that supports C++17 and the `-MMD` flag
+
+Note: You can manually build this project without GNU Make and with a
+different C++ compiler by compiling each `.cpp` file to a corresponding `.o`
+file and then linking all the `.o` files from `src/` with the `.o` files in
+either `main/` subdirectory.
 
 ## Quick Start
 ```sh
