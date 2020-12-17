@@ -1,7 +1,9 @@
 #ifndef __SRC_UTILS_BIT_UTILS_H__
 #define __SRC_UTILS_BIT_UTILS_H__
 
+#include <cassert>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 namespace Utils::BitUtils {
@@ -34,8 +36,23 @@ namespace Utils::BitUtils {
 
   template <typename T, typename U, typename... Args>
   constexpr auto extract_bits(T data, U offset, U next_offset, Args... args) {
-    auto result = (data >> offset) & ~(~0 << next_offset);
-    return std::tuple_cat({result}, extract_bits(data, args...));
+    static_assert(
+      std::is_unsigned_v<T>,
+      "Cannot extract bits from signed numbers"
+    );
+    static_assert(
+      std::is_unsigned_v<U>,
+      "Cannot extract bits using signed offsets"
+    );
+    assert(next_offset > offset && "Successive offsets musts increase");
+    auto result = (
+      (data >> offset) &
+      ~(~static_cast<T>(0) << (next_offset - offset))
+    );
+    return std::tuple_cat(
+      std::tuple<T>{result},
+      extract_bits(data, next_offset, args...)
+    );
   }
 }
 

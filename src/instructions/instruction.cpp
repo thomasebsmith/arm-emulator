@@ -4,14 +4,17 @@
 #include "decode_exception.h"
 #include "instruction.h"
 #include "shared.h"
+#include "utils/bit_utils.h"
+
+using Utils::BitUtils::extract_bits;
 
 namespace Instructions {
   Instruction::Instruction(IntegerType inst):
     internal_instruction{decode(inst)} {}
 
   Instruction::InternalInstructionT Instruction::decode(IntegerType inst) {
-    const unsigned opcode_offset = 25;
-    auto opcode = (inst >> opcode_offset) & 0b1111;
+    IntegerType opcode;
+    std::tie(opcode, std::ignore) = extract_bits(inst, 25u, 29u);
     switch (opcode) {
       case 0b0000:
         return ReservedInstruction(inst);
