@@ -65,8 +65,66 @@ $(call all_objects,src/disassemble/program.cpp):\
 
 src/disassemble/program.h: src/instructions/instruction.h
 
+$(call all_objects,src/instructions/decode_exception.cpp):\
+	src/instructions/decode_exception.h
+
 $(call all_objects,src/instructions/instruction.cpp):\
-	src/instructions/instruction.h
+	src/instructions/instruction.h src/instructions/decode_exception.h\
+	src/instructions/shared.h
+
+$(call all_objects,\
+	src/instructions/branch_exception_or_system_instruction.cpp):\
+	src/instructions/branch_exception_or_system_instruction.h
+
+src/instructions/branch_exception_or_system_instruction.h:\
+	src/instructions/shared.h
+
+$(call all_objects,src/instructions/data_processing_advanced_instruction.cpp):\
+	src/instructions/data_processing_advanced_instruction.h
+
+src/instructions/data_processing_advanced_instruction.h:\
+	src/instructions/shared.h
+
+$(call all_objects,\
+	src/instructions/data_processing_immediate_instruction.cpp):\
+	src/instructions/data_processing_immediate_instruction.h
+
+src/instructions/data_processing_immediate_instruction.h:\
+	src/instructions/shared.h
+
+$(call all_objects,src/instructions/data_processing_register_instruction.cpp):\
+	src/instructions/data_processing_register_instruction.h
+
+src/instructions/data_processing_register_instruction.h:\
+	src/instructions/shared.h
+
+$(call all_objects,src/instructions/decode_exception.cpp):\
+	src/instructions/decode_exception.h
+
+src/instructions/instruction.h:\
+	src/instructions/branch_exception_or_system_instruction.h\
+	src/instructions/data_processing_immediate_instruction.h\
+	src/instructions/data_processing_register_instruction.h\
+	src/instructions/data_processing_advanced_instruction.h\
+	src/instructions/load_or_store_instruction.h\
+	src/instructions/reserved_instruction.h\
+	src/instructions/shared.h\
+	src/instructions/sve_instruction.h
+
+$(call all_objects,src/instructions/load_or_store_instruction.cpp):\
+	src/instructions/load_or_store_instruction.h
+
+src/instructions/load_or_store_instruction.h: src/instructions/shared.h
+
+$(call all_objects,src/instructions/reserved_instruction.cpp):\
+	src/instructions/reserved_instruction.h
+
+src/instructions/reserved_instruction.h: src/instructions/shared.h
+
+$(call all_objects,src/instructions/sve_instruction.cpp):\
+	src/instructions/sve_instruction.h
+
+src/instructions/sve_instruction.h: src/instructions/shared.h
 
 $(call all_objects,src/meta/program_info.cpp): src/meta/program_info.h
 

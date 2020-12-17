@@ -4,12 +4,13 @@
 #include <iostream>
 #include <vector>
 #include "instructions/instruction.h"
+#include "instructions/shared.h"
 
 namespace Disassemble {
   class Program {
   public:
     using Instruction = Instructions::Instruction;
-    using InstructionType = Instruction::IntegerType;
+    using InstructionType = Instructions::IntegerType;
 
     void add_instruction(InstructionType inst);
 
