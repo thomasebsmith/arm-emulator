@@ -13,8 +13,7 @@ namespace Instructions {
     internal_instruction{decode(inst)} {}
 
   Instruction::InternalInstructionT Instruction::decode(IntegerType inst) {
-    IntegerType opcode;
-    std::tie(opcode, std::ignore) = extract_bits(inst, 25u, 29u);
+    const auto [opcode, _] = extract_bits(inst, 25u, 29u);
     switch (opcode) {
       case 0b0000:
         return ReservedInstruction(inst);
