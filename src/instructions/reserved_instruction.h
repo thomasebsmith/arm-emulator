@@ -14,6 +14,8 @@ namespace Instructions {
       UDF
     };
     Type type;
+
+    ImmediateType immediate;
   };
 }
 

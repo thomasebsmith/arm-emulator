@@ -9,9 +9,10 @@ namespace Instructions {
   ReservedInstruction::ReservedInstruction(
     IntegerType inst
   ) {
-    const auto [op1, _, op0] = extract_bits(inst, 16u, 25u, 29u);
+    const auto [imm16, op1, _, op0] = extract_bits(inst, 0u, 16u, 25u, 29u);
     if (op0 == 0b000 && op1 == 0b000000000) {
       type = Type::UDF;
+      immediate = static_cast<ImmediateType>(imm16);
     }
     else {
       throw DecodeException{"Unallocated instruction of type 'reserved'"};
@@ -19,6 +20,12 @@ namespace Instructions {
   }
 
   void ReservedInstruction::print_to(std::ostream &out) const {
-    out << "TODO: Reserved instruction";
+    switch (type) {
+      case Type::UDF:
+        out << "UDF #" << immediate;
+        break;
+      default:
+        assert(false && "Switch statement does not cover all types");
+    }
   }
 }

@@ -5,6 +5,7 @@
 
 namespace Instructions {
   using IntegerType = uint32_t;
+  using ImmediateType = uint16_t;
 }
 
 #endif
