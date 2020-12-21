@@ -1,1 +1,8 @@
+# Build output
 build/
+
+# Editor artifacts
+*.swp
+
+# MacOS artifacts
+.DS_Store
