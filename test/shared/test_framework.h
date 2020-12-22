@@ -2,18 +2,13 @@
 #define __TEST_SHARED_TEST_FRAMEWORK_H__
 
 #include <functional>
-#include <stdexcept>
 #include <string>
 #include <vector>
-
-// TODO: Test.h
+#include "test.h"
 
 class TestFramework {
 public:
-  class FailedAssertion: std::runtime_error {
-  public:
-    FailedAssertion(const std::string &msg);
-  };
+  TestFramework(const std::string &description_in);
 
   void that(
     const std::string &description,
@@ -22,10 +17,11 @@ public:
 
   void include(TestFramework &&otherFramework);
 
-  static void assert(bool value, const std::string &failure_message);
+  std::vector<Test::Result> run_all();
 
 private:
-  std::vector<TestFramework> subFrameworks;
+  std::string description;
+  std::vector<TestFramework> sub_frameworks;
   std::vector<Test> tests;
 }
 
