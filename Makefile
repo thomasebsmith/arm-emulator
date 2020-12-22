@@ -1,75 +1,92 @@
-# Source files
+#################
+# Configuration #
+#################
+
 MAIN_ROOT=main
-MAIN_DIRS=$(wildcard $(MAIN_ROOT)/*)
 SRC_ROOT=src
-SRC_DIRS=$(wildcard $(SRC_ROOT)/*)
-
-# Build output directories and targets
+ROOT_NAMES=$(MAIN_ROOT) $(SRC_ROOT)
 BUILD_ROOT=build
-DEBUG_DIR=$(BUILD_ROOT)/debug
-RELEASE_DIR=$(BUILD_ROOT)/release
-TARGETS=$(foreach dir,$(MAIN_DIRS),$(notdir $(dir)))
-DEBUG_TARGETS=$(addprefix $(DEBUG_DIR)/,$(TARGETS))
-RELEASE_TARGETS=$(addprefix $(RELEASE_DIR)/,$(TARGETS))
+OBJ_DIR_NAME=objects
+DEBUG=debug
+RELEASE=release
+CONFIGS=$(DEBUG) $(RELEASE)
+TARGET_NAMES=$(foreach dir,$(wildcard $(MAIN_ROOT)/*),$(notdir $(dir)))
 
-# Object files and output directories
-OBJ_DIR=objects
-DEBUG_OBJ_DIR=$(addprefix $(DEBUG_DIR)/,$(OBJ_DIR))
-RELEASE_OBJ_DIR=$(addprefix $(RELEASE_DIR)/,$(OBJ_DIR))
-DEBUG_OBJ_DIRS=$(foreach dir,$(SRC_DIRS) $(MAIN_DIRS),$(DEBUG_OBJ_DIR)/$(dir))
-RELEASE_OBJ_DIRS=$(foreach dir,$(SRC_DIRS) $(MAIN_DIRS),$(RELEASE_OBJ_DIR)/$(dir))
+#############
+# Functions #
+#############
 
-DEBUG_SRC_OBJ_FILES=$(foreach dir,$(SRC_DIRS),\
-				$(addprefix $(DEBUG_OBJ_DIR)/$(dir)/,\
-				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
-DEBUG_MAIN_OBJ_FILES=$(foreach dir,$(MAIN_DIRS),\
-				$(addprefix $(DEBUG_OBJ_DIR)/$(dir)/,\
-				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
-DEBUG_OBJ_FILES=$(DEBUG_SRC_OBJ_FILES) $(DEBUG_MAIN_OBJ_FILES)
+# build_dir(config)
+build_dir=$(BUILD_ROOT)/$(1)
 
-RELEASE_SRC_OBJ_FILES=$(foreach dir,$(SRC_DIRS),\
-				$(addprefix $(RELEASE_OBJ_DIR)/$(dir)/,\
-				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
-RELEASE_MAIN_OBJ_FILES=$(foreach dir,$(MAIN_DIRS),\
-				$(addprefix $(RELEASE_OBJ_DIR)/$(dir)/,\
-				$(patsubst %.cpp,%.o,$(notdir $(wildcard $(dir)/*.cpp)))))
-RELEASE_OBJ_FILES=$(RELEASE_SRC_OBJ_FILES) $(RELEASE_MAIN_OBJ_FILES)
+# obj_dir(config)
+obj_dir=$(call build_dir,$(1))/$(OBJ_DIR_NAME)
 
-ALL_OBJ_FILES=$(DEBUG_OBJ_FILES) $(RELEASE_OBJ_FILES)
+# object(config, cpp_source)
+object=$(call obj_dir,$(1))/$(2:.cpp=.o)
 
-# Compiler commands/flags
+# object_all_configs(cpp_source)
+object_all_configs=$(foreach config,$(CONFIGS),$(call object,$(config),$(1)))
+
+# targets(config)
+targets=$(addprefix $(call build_dir,$(1))/,$(TARGET_NAMES))
+
+# obj_dirs(config, root_dir)
+obj_dirs=$(foreach dir,$(wildcard $(2)/*),$(call obj_dir,$(1))/$(dir))
+
+# obj_files(config, root_dir)
+obj_files=$(addprefix $(call obj_dir,$(1))/,\
+		  $(patsubst %.cpp,%.o,\
+		  $(wildcard $(addsuffix /*.cpp,$(wildcard $(2)/*)))))
+
+# obj_files_all_roots(config)
+obj_files_all_roots=$(foreach root,$(ROOT_NAMES),\
+					$(call obj_files,$(1),$(root)))
+
+ALL_BUILD_DIRS=$(foreach config,$(CONFIGS),$(call build_dir,$(config)))
+ALL_OBJ_DIRS=$(foreach config,$(CONFIGS),\
+			 $(foreach root,$(ROOT_NAMES),\
+			 $(call obj_dirs,$(config),$(root))))
+ALL_OBJ_FILES=$(foreach config,$(CONFIGS),\
+			  $(call obj_files_all_roots,$(config)))
+
+##################
+# Commands/Flags #
+##################
+
 CC=g++
 CC_FLAGS=-Wall -Wconversion -Werror -pedantic -std=c++17 -MMD\
 		 -iquote $(SRC_ROOT)
 CC_FLAGS_DEBUG=-g3
 CC_FLAGS_RELEASE=-O3
 
-# Functions
-debug_object=$(DEBUG_OBJ_DIR)/$(1:.cpp=.o)
-release_object=$(RELEASE_OBJ_DIR)/$(1:.cpp=.o)
-all_objects=$(call debug_object,$(1)) $(call release_object,$(1))
+#############
+# Generated #
+#############
 
-# Header file dependencies
 GENERATED_HEADER_DEPENDENCIES=$(ALL_OBJ_FILES:.o=.d)
 -include $(GENERATED_HEADER_DEPENDENCIES)
 
-# Rules
+#########
+# Rules #
+#########
+
 .DEFAULT: debug
 
 .PHONY: all
 all: debug release
 
 .PHONY: debug
-debug: $(DEBUG_TARGETS)
+debug: $(call targets,$(DEBUG))
 
 .PHONY: release
-release: $(RELEASE_TARGETS)
+release: $(call targets,$(RELEASE))
 
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_ROOT)
 
-$(DEBUG_DIR) $(RELEASE_DIR) $(DEBUG_OBJ_DIRS) $(RELEASE_OBJ_DIRS):
+$(ALL_BUILD_DIRS) $(ALL_OBJ_DIRS):
 	mkdir -p $@
 
 # Secondary expansion section. Add rules that should not use this above this
@@ -77,26 +94,29 @@ $(DEBUG_DIR) $(RELEASE_DIR) $(DEBUG_OBJ_DIRS) $(RELEASE_OBJ_DIRS):
 .SECONDEXPANSION:
 
 # Rules for compiling source files into object files
-SRC_FILE_DEBUG=$(patsubst $(DEBUG_OBJ_DIR)/%.o,%.cpp,$@)
-SRC_FILE_RELEASE=$(patsubst $(RELEASE_OBJ_DIR)/%.o,%.cpp,$@)
 
-$(DEBUG_OBJ_FILES): $$(SRC_FILE_DEBUG) | $$(@D)
-	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) -c $(SRC_FILE_DEBUG) -o $@
+# src_file(config)
+src_file=$(patsubst $(call obj_dir,$(1))/%.o,%.cpp,$@)
 
-$(RELEASE_OBJ_FILES): $$(SRC_FILE_RELEASE) | $$(@D)
-	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) -c $(SRC_FILE_RELEASE) -o $@
+$(call obj_files_all_roots,$(DEBUG)): $$(call src_file,$(DEBUG)) | $$(@D)
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) -c $(call src_file,$(DEBUG)) -o $@
+
+$(call obj_files_all_roots,$(RELEASE)): $$(call src_file,$(RELEASE)) | $$(@D)
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) -c $(call src_file,$(RELEASE)) -o $@
 
 # Rules for compiling object files into executables
 TARGET_NAME=$(notdir $@)
 SOURCE_NAMES=$(patsubst %.cpp,%.o,\
 			 $(notdir $(wildcard $(MAIN_ROOT)/$(TARGET_NAME)/*.cpp)))
-DEBUG_OBJS=$(addprefix $(DEBUG_OBJ_DIR)/$(MAIN_ROOT)/$(TARGET_NAME)/,\
-		   $(SOURCE_NAMES)) $(DEBUG_SRC_OBJ_FILES)
-RELEASE_OBJS=$(addprefix $(RELEASE_OBJ_DIR)/$(MAIN_ROOT)/$(TARGET_NAME)/,\
-			 $(SOURCE_NAMES)) $(RELEASE_SRC_OBJ_FILES)
 
-$(DEBUG_TARGETS): $$(DEBUG_OBJS) | $(DEBUG_DIR)
-	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) $(DEBUG_OBJS) -o $@
+# main_objs(config)
+main_objs=$(addprefix $(call obj_dir,$(1))/$(MAIN_ROOT)/$(TARGET_NAME)/,\
+		   $(SOURCE_NAMES)) $(call obj_files,$(1),$(SRC_ROOT))
 
-$(RELEASE_TARGETS): $$(RELEASE_OBJS) | $(RELEASE_DIR)
-	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) $(RELEASE_OBJS) -o $@
+$(call targets,$(DEBUG)): $$(call main_objs,$(DEBUG)) |\
+	$(call build_dir,$(DEBUG))
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) $(call main_objs,$(DEBUG)) -o $@
+
+$(call targets,$(RELEASE)): $$(call main_objs,$(RELEASE)) |\
+	$(call build_dir,$(RELEASE))
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) $(call main_objs,$(RELEASE)) -o $@
