@@ -21,3 +21,13 @@ jobs:
       run: |
         make tests
         ./build/debug/test
+  ci-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: make all
+    - name: test
+      run: |
+        make tests
+        ./build/debug/test
