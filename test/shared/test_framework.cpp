@@ -24,7 +24,7 @@ std::vector<Test::Result> TestFramework::run_all() {
     auto framework_results = framework.run_all();
     for (auto &result : framework_results) {
       if (result) {
-        result->test_stack_trace.push_back(description);
+        result->test_stack_trace.push_back("In " + description);
       }
       results.push_back(std::move(result));
     }
@@ -32,7 +32,7 @@ std::vector<Test::Result> TestFramework::run_all() {
   for (auto &test : tests) {
    auto result = test.run();
    if (result) {
-    result->test_stack_trace.push_back(description);
+    result->test_stack_trace.push_back("In " + description);
    }
    results.push_back(std::move(result));
   }

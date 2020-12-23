@@ -1,6 +1,7 @@
 #ifndef __TEST_SHARED_TEST_H__
 #define __TEST_SHARED_TEST_H__
 
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <stdexcept>
@@ -12,6 +13,10 @@ public:
   class FailedAssertion: public std::runtime_error {
   public:
     FailedAssertion(const std::string &msg);
+    FailedAssertion(const std::string &msg, const std::string &location);
+    const std::optional<std::string> &get_location() const;
+  private:
+    std::optional<std::string> failure_location;
   };
 
   struct Failure {
@@ -31,6 +36,13 @@ public:
   );
 
   static void assert_true(bool value, const std::string &failure_message);
+  static void assert_true(
+    bool value,
+    const std::string &failure_message,
+    const std::string &function_name,
+    uint64_t line_number,
+    const std::string &file_name
+  );
 
   Result run();
 
@@ -38,5 +50,8 @@ private:
   std::string description;
   std::function<void()> run_test;
 };
+
+#define confirm(value, msg) \
+  Test::assert_true((value), (msg), __func__, __LINE__, __FILE__)
 
 #endif
