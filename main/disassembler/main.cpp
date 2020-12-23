@@ -10,7 +10,7 @@ using CLI::CLIParser;
 int main(int argc, char *argv[]) {
   try {
     CLIParser cli{argc, argv, {
-      CLIParser::Flag{'h', "help", "Show help" },
+      CLIParser::Flag{'h', "help", "Show help"},
       CLIParser::Flag{'v', "version", "Show version information"},
       CLIParser::Argument{"input_file", "file", "Get machine code from <file>"}
     }};
