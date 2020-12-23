@@ -15,21 +15,25 @@ void TestFramework::that(
 }
 
 void TestFramework::include(TestFramework &&otherFramework) {
-  subFrameworks.emplace_back(otherFramework);
+  sub_frameworks.emplace_back(otherFramework);
 }
 
-std::vector<Test::Result> run_all() {
+std::vector<Test::Result> TestFramework::run_all() {
   std::vector<Test::Result> results;
   for (auto &framework : sub_frameworks) {
     auto framework_results = framework.run_all();
     for (auto &result : framework_results) {
-      result.test_stack_trace.push_back(description);
+      if (result) {
+        result->test_stack_trace.push_back(description);
+      }
       results.push_back(std::move(result));
     }
   }
   for (auto &test : tests) {
    auto result = test.run();
-   result.test_stack_trace.push_back(description);
+   if (result) {
+    result->test_stack_trace.push_back(description);
+   }
    results.push_back(std::move(result));
   }
   return results;

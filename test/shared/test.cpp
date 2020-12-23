@@ -17,7 +17,7 @@ Test::Test(
   const std::function<void()> &run_test_in
 ): description{description_in}, run_test{run_test_in} {}
 
-void Test::assert(bool value, const std::string &failure_message) {
+void Test::assert_true(bool value, const std::string &failure_message) {
   if (!value) {
     throw FailedAssertion(failure_message);
   }
@@ -28,10 +28,13 @@ Test::Result Test::run() {
     run_test();
   }
   catch (const FailedAssertion &failure) {
-    return {"Assertion failed: " + std::string{failure.what()}, {description}};
+    return Failure{
+      "Assertion failed: " + std::string{failure.what()}, 
+      {description}
+    };
   }
   catch (const std::runtime_error &error) {
-    return {error.what(), {description}};
+    return Failure{error.what(), {description}};
   }
   return std::nullopt;
 }

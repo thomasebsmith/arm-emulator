@@ -23,6 +23,6 @@ private:
   std::string description;
   std::vector<TestFramework> sub_frameworks;
   std::vector<Test> tests;
-}
+};
 
 #endif

@@ -9,7 +9,7 @@
 
 class Test {
 public:
-  class FailedAssertion: std::runtime_error {
+  class FailedAssertion: public std::runtime_error {
   public:
     FailedAssertion(const std::string &msg);
   };
@@ -30,7 +30,7 @@ public:
     const std::function<void()> &run_test_in
   );
 
-  static void assert(bool value, const std::string &failure_message);
+  static void assert_true(bool value, const std::string &failure_message);
 
   Result run();
 
