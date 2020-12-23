@@ -7,10 +7,12 @@ the disassembler is not designed to produce human-friendly output.
  - GNU Make
  - `g++` or an equivalent (e.g. Clang) that supports C++17 and the `-MMD` flag
 
-Note: You can manually build this project without GNU Make and with a
-different C++ compiler by compiling each `.cpp` file to a corresponding `.o`
-file and then linking all the `.o` files from `src/` with the `.o` files in
-either `main/` subdirectory.
+Notes:
+ - You can manually build this project without GNU Make and with a
+   different C++ compiler by compiling each `.cpp` file to a corresponding `.o`
+   file and then linking all the `.o` files from `src/` with the `.o` files in
+   either `main/` subdirectory.
+ - `g++` should be version 8.0 or later to avoid incorrect compiler warnings.
 
 ## Quick Start
 ```sh

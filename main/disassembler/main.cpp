@@ -1,6 +1,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <string>
 #include "cli/cli_parser.h"
 #include "meta/program_info.h"
 #include "disassemble.h"
@@ -25,7 +26,10 @@ int main(int argc, char *argv[]) {
     }
     else {
       if (auto file_name = cli.get_argument("input_file")) {
-        std::ifstream input_file{*file_name, std::ios::binary | std::ios::in};
+        std::ifstream input_file{
+          std::string{*file_name},
+          std::ios::binary | std::ios::in
+        };
         if (!input_file) {
           std::cerr << "Could not read file " << *file_name << ".\n";
           return 1;

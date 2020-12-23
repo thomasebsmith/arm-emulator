@@ -58,6 +58,6 @@ namespace CLI {
     std::vector<std::string> arguments;
     std::unordered_set<std::string> flags;
   };
-};
+}
 
 #endif
