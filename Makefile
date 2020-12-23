@@ -4,12 +4,14 @@
 
 MAIN_ROOT=main
 SRC_ROOT=src
-ROOT_NAMES=$(MAIN_ROOT) $(SRC_ROOT)
+TEST_ROOT=test
+ROOT_NAMES=$(MAIN_ROOT) $(SRC_ROOT) $(TEST_ROOT)
 BUILD_ROOT=build
 OBJ_DIR_NAME=objects
 DEBUG=debug
 RELEASE=release
 CONFIGS=$(DEBUG) $(RELEASE)
+TEST_TARGET_NAME=test
 TARGET_NAMES=$(foreach dir,$(wildcard $(MAIN_ROOT)/*),$(notdir $(dir)))
 
 #############
@@ -30,6 +32,9 @@ object_all_configs=$(foreach config,$(CONFIGS),$(call object,$(config),$(1)))
 
 # targets(config)
 targets=$(addprefix $(call build_dir,$(1))/,$(TARGET_NAMES))
+
+# test_target(config)
+test_target=$(call build_dir,$(1))/$(TEST_TARGET_NAME)
 
 # obj_dirs(config, root_dir)
 obj_dirs=$(foreach dir,$(wildcard $(2)/*),$(call obj_dir,$(1))/$(dir))
@@ -82,6 +87,9 @@ debug: $(call targets,$(DEBUG))
 .PHONY: release
 release: $(call targets,$(RELEASE))
 
+.PHONY: tests
+tests: $(call test_target,$(DEBUG))
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_ROOT)
@@ -106,12 +114,17 @@ $(call obj_files_all_roots,$(RELEASE)): $$(call src_file,$(RELEASE)) | $$(@D)
 
 # Rules for compiling object files into executables
 TARGET_NAME=$(notdir $@)
+
 SOURCE_NAMES=$(patsubst %.cpp,%.o,\
 			 $(notdir $(wildcard $(MAIN_ROOT)/$(TARGET_NAME)/*.cpp)))
 
 # main_objs(config)
 main_objs=$(addprefix $(call obj_dir,$(1))/$(MAIN_ROOT)/$(TARGET_NAME)/,\
 		   $(SOURCE_NAMES)) $(call obj_files,$(1),$(SRC_ROOT))
+
+# test_objs(config)
+test_objs=$(call obj_files,$(1),$(TEST_ROOT))\
+		  $(call obj_files,$(1),$(SRC_ROOT))
 
 $(call targets,$(DEBUG)): $$(call main_objs,$(DEBUG)) |\
 	$(call build_dir,$(DEBUG))
@@ -120,3 +133,7 @@ $(call targets,$(DEBUG)): $$(call main_objs,$(DEBUG)) |\
 $(call targets,$(RELEASE)): $$(call main_objs,$(RELEASE)) |\
 	$(call build_dir,$(RELEASE))
 	$(CC) $(CC_FLAGS) $(CC_FLAGS_RELEASE) $(call main_objs,$(RELEASE)) -o $@
+
+$(call test_target,$(DEBUG)): $$(call test_objs,$(DEBUG)) |\
+	$(call build_dir,$(DEBUG))
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_DEBUG) $(call test_objs,$(DEBUG)) -o $@
