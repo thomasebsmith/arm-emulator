@@ -1,7 +1,7 @@
 # ARM Emulator
 
 ![CI
-status] (https://github.com/thomasebsmith/arm-emulator/workflows/CI/badge.svg)
+status](https://github.com/thomasebsmith/arm-emulator/workflows/CI/badge.svg)
 
 This is a lightweight ARM emulator written in cross-platform C++.
 Incidentally, this project also includes an ARM disassembler; however,
