@@ -3,10 +3,13 @@
 #include "../shared/test.h"
 #include "../shared/test_framework.h"
 
+#include "../cli/tests.h"
+
 using CLI::CLIParser;
 
 TestFramework get_test_framework() {
   TestFramework test{"main test suite"};
+  test.include(Tests::CLI::framework());
   return test;
 }
 
