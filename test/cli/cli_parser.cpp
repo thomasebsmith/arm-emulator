@@ -17,12 +17,27 @@ namespace Tests::CLI {
         try {
           CLIParser parser{argc, argv, {}};
         }
-        catch (CLIParser::ParseException &err) {
+        catch (const CLIParser::ParseException &err) {
           std::string assertion_message = "Unexpected parse exception \"";
           assertion_message += err.what();
           assertion_message += '"';
           confirm(false, assertion_message);
         }
+      }
+    );
+    test.that(
+      "it gives an error if no program name is provided",
+      []() {
+        bool exception_thrown = false;
+        int argc = 0;
+        char *argv[] = {nullptr};
+        try {
+          CLIParser parser(argc, argv, {});
+        }
+        catch (const CLIParser::ParseException &err) {
+          exception_thrown = true;
+        }
+        confirm(exception_thrown, "No exception was thrown");
       }
     );
     return test;
