@@ -5,6 +5,13 @@
 
 using CLI::CLIParser;
 
+std::string create_message(const CLIParser::ParseException &err) {
+  std::string message = "Unexpected parse exception \"";
+  message += err.what();
+  message += '"';
+  return message;
+}
+
 namespace Tests::CLI {
   TestFramework cli_parser_tests() {
     TestFramework test{"CLIParser tests"};
@@ -18,10 +25,7 @@ namespace Tests::CLI {
           CLIParser parser{argc, argv, {}};
         }
         catch (const CLIParser::ParseException &err) {
-          std::string assertion_message = "Unexpected parse exception \"";
-          assertion_message += err.what();
-          assertion_message += '"';
-          confirm(false, assertion_message);
+          confirm(false, create_message(err));
         }
       }
     );
@@ -34,10 +38,30 @@ namespace Tests::CLI {
         try {
           CLIParser parser(argc, argv, {});
         }
-        catch (const CLIParser::ParseException &err) {
+        catch (const CLIParser::ParseException &) {
           exception_thrown = true;
         }
         confirm(exception_thrown, "No exception was thrown");
+      }
+    );
+    test.that(
+      "it parses a single flag correctly",
+      []() {
+        int argc = 2;
+        char program_name[] = "./program";
+        char flag[] = "--a-Flag";
+        char *argv[] = {program_name, flag};
+        try {
+          CLIParser parser(argc, argv, {
+            CLIParser::Flag{'a', "a-Flag", "some flag"},
+            CLIParser::Flag{'b', "a-flag", "some other flag"}
+          });
+          confirm(parser.has_flag("a-Flag"), "Flag provided but not found");
+          confirm(!parser.has_flag("a-flag"), "Case insensitive flag parsing");
+        }
+        catch (const CLIParser::ParseException &err) {
+          confirm(false, create_message(err));
+        }
       }
     );
     return test;
