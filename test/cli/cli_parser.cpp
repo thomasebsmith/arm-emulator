@@ -64,6 +64,29 @@ namespace Tests::CLI {
         }
       }
     );
+    test.that(
+      "it parses a single argument correctly",
+      []() {
+      int argc = 2;
+      char program_name[] = "/path/to/program";
+      char argument[] = "some value - It shouldn't matter what's here\"\\";
+      char *argv[] = {program_name, argument};
+      try {
+        CLIParser parser(argc, argv, {
+          CLIParser::Argument{"the_argument", "argument", "description"}
+        });
+        auto arg = parser.get_argument("the_argument");
+        confirm(!!arg, "Argument provided but not found");
+        confirm(
+          *arg == argument,
+          std::string{"Incorrect argument value retrieved: Expected \""} +
+            argument + "\" but found \"" + std::string{*arg} + '"'
+        );
+      }
+      catch (const CLIParser::ParseException &err) {
+        confirm(false, create_message(err));
+      }
+    });
     return test;
   }
 }
