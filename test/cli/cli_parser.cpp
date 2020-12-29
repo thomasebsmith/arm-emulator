@@ -67,26 +67,57 @@ namespace Tests::CLI {
     test.that(
       "it parses a single argument correctly",
       []() {
-      int argc = 2;
-      char program_name[] = "/path/to/program";
-      char argument[] = "some value - It shouldn't matter what's here\"\\";
-      char *argv[] = {program_name, argument};
-      try {
-        CLIParser parser(argc, argv, {
-          CLIParser::Argument{"the_argument", "argument", "description"}
-        });
-        auto arg = parser.get_argument("the_argument");
-        confirm(!!arg, "Argument provided but not found");
-        confirm(
-          *arg == argument,
-          std::string{"Incorrect argument value retrieved: Expected \""} +
-            argument + "\" but found \"" + std::string{*arg} + '"'
-        );
+        int argc = 2;
+        char program_name[] = "/path/to/program";
+        char argument[] = "some value - It shouldn't matter what's here\"\\";
+        char *argv[] = {program_name, argument};
+        try {
+          CLIParser parser(argc, argv, {
+            CLIParser::Argument{"the_argument", "argument", "description"}
+          });
+          auto arg = parser.get_argument("the_argument");
+          confirm(!!arg, "Argument provided but not found");
+          confirm(
+            *arg == argument,
+            std::string{"Incorrect argument value retrieved: Expected \""} +
+              argument + "\" but found \"" + std::string{*arg} + '"'
+          );
+        }
+        catch (const CLIParser::ParseException &err) {
+          confirm(false, create_message(err));
+        }
       }
-      catch (const CLIParser::ParseException &err) {
-        confirm(false, create_message(err));
+    );
+    test.that(
+      "it fails if given extra flags",
+      []() {
+        int argc = 2;
+        char program_name[] = "Program.exe";
+        char flag[] = "--flag";
+        char flag2[] = "-f";
+        char *argv1[] = {program_name, flag};
+        char *argv2[] = {program_name, flag2};
+        bool error_thrown = false;
+        try {
+          CLIParser parser(argc, argv1, {});
+        }
+        catch (const CLIParser::ParseException &) {
+          error_thrown = true;
+        }
+        confirm(error_thrown, "Expected error when given extra flags");
+
+        error_thrown = false;
+        try {
+          CLIParser parser(argc, argv2, {
+            CLIParser::Argument{"argument", "argument", "argument!"}
+          });
+        }
+        catch (const CLIParser::ParseException &) {
+          error_thrown = true;
+        }
+        confirm(error_thrown, "Expected error when given extra flags");
       }
-    });
+    );
     return test;
   }
 }
