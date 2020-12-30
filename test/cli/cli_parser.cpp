@@ -146,6 +146,37 @@ namespace Tests::CLI {
         confirm(error_thrown, "Expected error when given extra argument");
       }
     );
+    test.that(
+      "it can parse flags and arguments together",
+      []() {
+        int argc = 4;
+        char program_name[] = "./the/program";
+        char flag1[] = "--the-flag";
+        char flag2[] = "-u";
+        char argument[] = "\"the argument\"";
+        char *argv[] = {program_name, flag1, argument, flag2};
+        try {
+          CLIParser parser(argc, argv, {
+            CLIParser::Flag{'t', "the-flag", "description"},
+            CLIParser::Flag{'u', "un-flag", "description"},
+            CLIParser::Argument{"internal_name", "name", "description"},
+            CLIParser::Flag{'a', "an-unused-flag", "description"}
+          });
+          confirm(parser.has_flag("the-flag"), "Failed to parse first flag");
+          confirm(parser.has_flag("un-flag"), "Failed to parse second flag");
+          confirm(
+            !parser.has_flag("an-unused-flag"),
+            "Unexpectedly had third flag"
+          );
+          auto arg = parser.get_argument("internal_name");
+          confirm(!!arg, "Failed to parse the argument");
+          confirm(*arg == argument, "Wrong value parsed for argument");
+        }
+        catch (const CLIParser::ParseException &err) {
+          confirm(false, create_message(err));
+        }
+      }
+    );
     return test;
   }
 }
