@@ -118,6 +118,34 @@ namespace Tests::CLI {
         confirm(error_thrown, "Expected error when given extra flags");
       }
     );
+    test.that(
+      "it fails if given extra arguments",
+      []() {
+        int argc = 2;
+        char program_name[] = "my program name here";
+        char argument[] = "argument-value-here";
+        char *argv[] = {program_name, argument};
+        bool error_thrown = false;
+        try {
+          CLIParser parser(argc, argv, {});
+        }
+        catch (const CLIParser::ParseException &) {
+          error_thrown = true;
+        }
+        confirm(error_thrown, "Expected error when given extra argument");
+
+        error_thrown = false;
+        try {
+          CLIParser parser(argc, argv, {
+            CLIParser::Flag{'a', "argument-value-here", "description here"}
+          });
+        }
+        catch (const CLIParser::ParseException &) {
+          error_thrown = true;
+        }
+        confirm(error_thrown, "Expected error when given extra argument");
+      }
+    );
     return test;
   }
 }
