@@ -14,9 +14,22 @@
 #include <vector>
 
 namespace CLI {
+  /*
+   * Represents a set of parsed command line flags and arguments for some
+   * program.
+   */
   class CLIParser {
   public:
 
+    /*
+     * An Argument is a value given at the command line without a name.
+     * For example, in "vim ~/.vimrc", "~/.vimrc" is an argument.
+     *
+     * internal_name is used when accessing the argument's value with
+     * get_argument.
+     *
+     * help_name and description are used in show_help.
+     */
     struct Argument {
       std::string internal_name;
       std::string help_name;
@@ -25,6 +38,17 @@ namespace CLI {
       Argument() = delete;
     };
 
+    /*
+     * A Flag is a boolean switch given at the command line by name or in
+     * an abbreviated (one-letter) form.
+     * For example, in "ls -l", "-l" is a flag.
+     *
+     * shortcut is the one-letter form (e.g. 'l' for "-l").
+     * full_name is the full form of the flag, with leading dashes
+     * removed(e.g. "all" for "--all").
+     *
+     * description is used in show_help.
+     */
     struct Flag {
       char shortcut;
       std::string full_name;
