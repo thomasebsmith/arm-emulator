@@ -57,21 +57,43 @@ namespace CLI {
       Flag() = delete;
     };
 
+    /*
+     * Represents an error that occurs while parsing command line arguments.
+     */
     class ParseException: public std::runtime_error {
     public:
       ParseException(const std::string &error_message);
     };
 
+    /*
+     * A utility typedef for any kind of command line option.
+     */
     using Option = std::variant<Argument, Flag>;
 
+    /*
+     * Parse the command line arguments found in argc and argv using the
+     * possible valid options in options.
+     *
+     * Requires length(argv) >= argc.
+     */
     CLIParser(int argc, char *argv[], const std::vector<Option> &options);
 
+    /*
+     * Returns whether the flag with name full_name was found while parsing.
+     */
     bool has_flag(const std::string &full_name);
 
+    /*
+     * Returns the value found for the argument with name internal_name, or
+     * nullopt if the argument was not supplied.
+     */
     std::optional<std::string_view> get_argument(
       const std::string &internal_name
     );
 
+    /*
+     * Prints the help for this CLI to out.
+     */
     std::ostream &show_help(std::ostream &out);
 
   private:
