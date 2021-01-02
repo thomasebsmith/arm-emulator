@@ -79,7 +79,7 @@ GENERATED_HEADER_DEPENDENCIES=$(ALL_OBJ_FILES:.o=.d)
 .DEFAULT: debug
 
 .PHONY: all
-all: debug release test
+all: debug release tests
 
 .PHONY: debug
 debug: $(call targets,$(DEBUG))
