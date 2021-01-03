@@ -76,7 +76,7 @@ GENERATED_HEADER_DEPENDENCIES=$(ALL_OBJ_FILES:.o=.d)
 # Rules #
 #########
 
-.DEFAULT: debug
+.DEFAULT_GOAL:=debug
 
 .PHONY: all
 all: debug release tests
