@@ -13,7 +13,7 @@ namespace Instructions {
   public:
     /*
      * Parses an instruction from the binary data in inst. Requires that inst
-     * represetns an instruction of the appropriate category.
+     * represents an instruction of the appropriate category.
      */
     BranchExceptionOrSystemInstruction(IntegerType inst);
 
