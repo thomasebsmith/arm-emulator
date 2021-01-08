@@ -13,10 +13,21 @@
 #include "sve_instruction.h"
 
 namespace Instructions {
+  /*
+   * Represents an ARM instruction.
+   * Sub-types of instructions are stored via composition in a std::variant.
+   */
   class Instruction {
   public:
+    /*
+     * Parses an instruction from the binary data in inst.
+     * May throw a DecodeException if inst is invalid.
+     */
     Instruction(IntegerType inst);
 
+    /*
+     * Outputs a human-readable (disassembled) form of the instruction to out.
+     */
     void print_to(std::ostream &out) const;
   private:
     using InternalInstructionT = std::variant<
