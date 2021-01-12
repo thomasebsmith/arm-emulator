@@ -7,6 +7,10 @@
 namespace Meta {
   class ProgramInfo {
   public:
+    /*
+     * Prints information about this ARM Emulator (copyright, version info,
+     * etc.) to out.
+     */
     static std::ostream &show_version_info(std::ostream &out);
   private:
     static std::string name;
