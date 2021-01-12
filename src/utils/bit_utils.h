@@ -6,9 +6,20 @@
 #include <type_traits>
 #include <utility>
 
+/*
+ * Note: All systems are assumed to be either big-endian or
+ * little-endian with 8-bit bytes.
+ */
 namespace Utils::BitUtils {
+  /*
+   * Determines whether the endianness of the current OS aligns with the ARM
+   * ISA's endianness (little endian).
+   */
   bool is_correct_endianness();
 
+  /*
+   * Flips the endianness of num, from big to little or little to big.
+   */
   template <typename T>
   void flip_endianness(T &num) {
     static_assert(sizeof(T) > 0, "Cannot flip endianness of empty type");
@@ -21,6 +32,10 @@ namespace Utils::BitUtils {
     }
   }
 
+  /*
+   * Flips num's endianness if this system does not have the same endianness as
+   * the ARM ISA.
+   */
   template <typename T>
   T convert_endianness(T num) {
     if (!is_correct_endianness()) {
@@ -29,6 +44,10 @@ namespace Utils::BitUtils {
     return num;
   }
 
+  /*
+   * Returns a tuple of the sections of bits in data bounded by the provided
+   * offsets.
+   */
   template <typename T, typename U>
   constexpr auto extract_bits(T data, U offset) {
     return std::tuple<T>{data >> offset};
