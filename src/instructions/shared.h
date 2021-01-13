@@ -1,5 +1,5 @@
-#ifndef __SRC_INSTRUCTIONS_SHARED_H__
-#define __SRC_INSTRUCTIONS_SHARED_H__
+#ifndef SRC_INSTRUCTIONS_SHARED_H
+#define SRC_INSTRUCTIONS_SHARED_H
 
 #include <cstdint>
 

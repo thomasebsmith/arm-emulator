@@ -1,5 +1,5 @@
-#ifndef __SRC_DISASSEMBLE_PROGRAM_H__
-#define __SRC_DISASSEMBLE_PROGRAM_H__
+#ifndef SRC_DISASSEMBLE_PROGRAM_H
+#define SRC_DISASSEMBLE_PROGRAM_H
 
 #include <iostream>
 #include <vector>

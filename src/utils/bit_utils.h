@@ -1,5 +1,5 @@
-#ifndef __SRC_UTILS_BIT_UTILS_H__
-#define __SRC_UTILS_BIT_UTILS_H__
+#ifndef SRC_UTILS_BIT_UTILS_H
+#define SRC_UTILS_BIT_UTILS_H
 
 #include <cassert>
 #include <tuple>

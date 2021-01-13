@@ -1,5 +1,5 @@
-#ifndef __SRC_META_PROGRAM_INFO_H__
-#define __SRC_META_PROGRAM_INFO_H__
+#ifndef SRC_META_PROGRAM_INFO_H
+#define SRC_META_PROGRAM_INFO_H
 
 #include <iostream>
 #include <string>

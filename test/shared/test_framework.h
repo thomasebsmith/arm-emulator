@@ -1,5 +1,5 @@
-#ifndef __TEST_SHARED_TEST_FRAMEWORK_H__
-#define __TEST_SHARED_TEST_FRAMEWORK_H__
+#ifndef TEST_SHARED_TEST_FRAMEWORK_H
+#define TEST_SHARED_TEST_FRAMEWORK_H
 
 #include <functional>
 #include <string>

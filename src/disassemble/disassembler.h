@@ -1,5 +1,5 @@
-#ifndef __SRC_DISASSEMBLER_DISASSEMBLER_H__
-#define __SRC_DISASSEMBLER_DISASSEMBLER_H__
+#ifndef SRC_DISASSEMBLER_DISASSEMBLER_H
+#define SRC_DISASSEMBLER_DISASSEMBLER_H
 
 #include <iostream>
 #include <stdexcept>

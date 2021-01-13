@@ -1,5 +1,5 @@
-#ifndef __TEST_SHARED_TEST_H__
-#define __TEST_SHARED_TEST_H__
+#ifndef TEST_SHARED_TEST_H
+#define TEST_SHARED_TEST_H
 
 #include <cstdint>
 #include <functional>
