@@ -5,7 +5,7 @@ status](https://github.com/thomasebsmith/arm-emulator/workflows/CI/badge.svg)
 
 This is a lightweight ARM emulator written in cross-platform C++.
 Incidentally, this project also includes an ARM disassembler; however,
-the disassembler is not designed to produce human-friendly output.
+the disassembler is not the primary focus of this project.
 
 ## Build Prerequisites
  - GNU Make
@@ -16,7 +16,8 @@ Notes:
    different C++ compiler by compiling each `.cpp` file to a corresponding `.o`
    file and then linking all the `.o` files from `src/` with the `.o` files in
    either `main/` subdirectory.
- - `g++` should be version 8.0 or later to avoid incorrect compiler warnings.
+ - `g++` should be version 8.0 or later to avoid incorrect compiler warnings
+   related to structured bindings.
 
 ## Quick Start
 ```sh
