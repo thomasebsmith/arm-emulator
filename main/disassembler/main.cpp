@@ -1,5 +1,4 @@
 #include <fstream>
-#include <functional>
 #include <iostream>
 #include <string>
 #include "cli/cli_parser.h"
