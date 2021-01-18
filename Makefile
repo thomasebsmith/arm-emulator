@@ -18,6 +18,8 @@ TARGET_NAMES=$(foreach dir,$(wildcard $(MAIN_ROOT)/*),$(notdir $(dir)))
 # Functions #
 #############
 
+# Note: config should be either $(DEBUG) or $(RELEASE).
+
 # build_dir(config)
 build_dir=$(BUILD_ROOT)/$(1)
 
