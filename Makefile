@@ -1,3 +1,14 @@
+# Generic C++ project Makefile
+# ============================
+# src/ should contain subdirectories. Each subdirectory can contain one or more
+#   .cpp files, which will be compiled and linked in every executable.
+# .h files in src/ subdirectories can be #included with something of the form
+#   `#include "subdir/file.h"`.
+# main/ should contain subdirectories. Each subdirectory corresponds to one
+#   executable. All .cpp files in each subdirectory will be linked to create
+#   a corresponding executable
+# ============================
+
 #################
 # Configuration #
 #################
