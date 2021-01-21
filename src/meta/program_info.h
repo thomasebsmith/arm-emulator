@@ -17,6 +17,7 @@ namespace Meta {
     static std::string version;
     static std::string author;
     static std::string copyright;
+    static std::string license;
   };
 }
 
