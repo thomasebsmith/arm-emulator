@@ -30,6 +30,8 @@ CLI::CLIParser::CLIParser(
 
   program_name = argv[0];
 
+  // Parse options into internal data structures. Throw a
+  //  ParseException if there are repeated options, arguments, etc.
   for (const auto &option_variant : options) {
     std::visit([=](auto &&option) {
       using OptionT = std::decay_t<decltype(option)>;
@@ -60,6 +62,8 @@ CLI::CLIParser::CLIParser(
     }, option_variant);
   }
 
+  // Parse the actual provided arguments. Throw a ParseException if any of
+  // these are invalid or unexpected.
   bool raw_arguments = false;
   for (int i = 1; i < argc; ++i) {
     const std::string &argument = argv[i];
