@@ -25,7 +25,8 @@ Notes:
 ```sh
 $ git clone https://github.com/thomasebsmith/arm-emulator.git
 $ cd arm-emulator/
-$ make release
+$ make all
+$ ./build/debug/test
 $ ./build/release/disassembler <args>
 $ ./build/release/emulator <args>
 ```
