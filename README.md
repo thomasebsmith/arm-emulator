@@ -10,6 +10,7 @@ the disassembler is not the primary focus of this project.
 ## Build Prerequisites
  - GNU Make
  - `g++` or an equivalent (e.g. Clang) that supports C++17 and the `-MMD` flag
+   - The equivalent must be aliased as `g++`.
 
 Notes:
  - You can manually build this project without GNU Make and with a
