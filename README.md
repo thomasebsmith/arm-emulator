@@ -7,6 +7,9 @@ This is a lightweight ARM emulator written in cross-platform C++.
 This project also includes an ARM disassembler; however,
 the disassembler is not the primary focus of this project.
 
+Since this is an emulator and not a compiler (JIT or otherwise), this project
+is not particularly fast.
+
 ## Build Prerequisites
  - GNU Make
  - `g++` or an equivalent (e.g. Clang) that supports C++17 and the `-MMD` flag
