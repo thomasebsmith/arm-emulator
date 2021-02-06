@@ -8,8 +8,9 @@ namespace Meta {
   class ProgramInfo {
   public:
     /*
-     * Prints information about this ARM Emulator (copyright, version info,
-     * etc.) to out.
+     * Prints information about this project (copyright, version info,
+     * etc.) to out. The information is neutral and can be used for
+     * either the emulator executable or the disassembler executable.
      */
     static std::ostream &show_version_info(std::ostream &out);
   private:
