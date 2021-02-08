@@ -19,6 +19,8 @@ namespace Utils::BitUtils {
 
   /*
    * Flips the endianness of num, from big to little or little to big.
+   * Note that the endianness of num does not matter, since flip_endianness
+   * is its own inverse.
    */
   template <typename T>
   void flip_endianness(T &num) {
@@ -55,6 +57,7 @@ namespace Utils::BitUtils {
 
   template <typename T, typename U, typename... Args>
   constexpr auto extract_bits(T data, U offset, U next_offset, Args... args) {
+    // Needed since many bit operations are UB or disallowed on signed numbers.
     static_assert(
       std::is_unsigned_v<T>,
       "Cannot extract bits from signed numbers"
