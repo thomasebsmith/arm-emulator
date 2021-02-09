@@ -1,0 +1,22 @@
+# Project Architecture
+A small amount of source code is found in `main/`. `main/` contains files
+that create the specific disassembler and emulator command-line interfaces
+and executables.
+
+Most source code is found in `src/`. `src/` contains all files shared among
+the disassembler and emulator, as well as any file that does not directly
+relate to one of those two executables.
+
+Here is an overview of the subdirectories of `src/`:
+ - `cli`: Contains generic code for parsing command-line arguments. Used by
+          both the disassembler and the emulator.
+ - `disassemble`: Contains code for converting a stream of bits into a series
+          of instructions.
+ - `instructions`: Contains all instruction-specific code (disassembling,
+          emulating, etc).
+ - `meta`: Contains code that provides information about the project as a
+          whole (e.g. authors, copyright, etc.).
+ - `utils`: Contains utility classes and functions. Currently, this only
+          contains utilities related to parsing bits.
+
+There is also a `test/` folder, which contains unit and integration tests.
