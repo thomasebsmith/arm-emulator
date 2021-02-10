@@ -19,4 +19,9 @@ Here is an overview of the subdirectories of `src/`:
  - `utils`: Contains utility classes and functions. Currently, this only
           contains utilities related to parsing bits.
 
-There is also a `test/` folder, which contains unit and integration tests.
+There are also unit and integration tests in `test/`.
+
+Here is an overview of the subdirectories of `test/`:
+ - `cli`: Contains tests related to command-line interface code.
+ - `main`: Contains the main program that runs all the tests.
+ - `shared`: Contains types and objects that are used to define tests.
