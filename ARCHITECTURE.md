@@ -1,8 +1,12 @@
 # Project Architecture
+ARM Emulator has three main categories of source code.
+
+## `main`
 A small amount of source code is found in `main/`. `main/` contains files
 that create the specific disassembler and emulator command-line interfaces
 and executables.
 
+## `src`
 Most source code is found in `src/`. `src/` contains all files shared among
 the disassembler and emulator, as well as any file that does not directly
 relate to one of those two executables.
@@ -19,7 +23,9 @@ Here is an overview of the subdirectories of `src/`:
  - `utils`: Contains utility classes and functions. Currently, this only
           contains utilities related to parsing bits.
 
-There are also unit and integration tests in `test/`.
+## `test`
+There is also some source code in the form of unit and integration tests in
+`test/`.
 
 Here is an overview of the subdirectories of `test/`:
  - `cli`: Contains tests related to command-line interface code.
