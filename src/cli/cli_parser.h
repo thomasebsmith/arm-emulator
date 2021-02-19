@@ -57,6 +57,15 @@ namespace CLI {
       Flag() = delete;
     };
 
+    struct NamedArgument {
+      char shortcut;
+      std::string full_name;
+      std::string description;
+      std::string value_description;
+
+      NamedArgument() = delete;
+    };
+
     /*
      * Represents an error that occurs while parsing command line arguments.
      */
@@ -68,7 +77,7 @@ namespace CLI {
     /*
      * A utility typedef for any kind of command line option.
      */
-    using Option = std::variant<Argument, Flag>;
+    using Option = std::variant<Argument, Flag, NamedArgument>;
 
     /*
      * Parse the command line arguments found in argc and argv using the
@@ -92,16 +101,28 @@ namespace CLI {
     );
 
     /*
+     * Returns the value found for the argument with name full_name, or
+     * nullopt if the named argument was not supplied.
+     */
+    std::optional<std::string_view> get_named_argument(
+      const std::string &full_name
+    );
+
+    /*
      * Prints the help for this CLI to out.
      */
     std::ostream &show_help(std::ostream &out);
 
   private:
+    using NamedArgOrFlag = std::variant<NamedArgument, Flag>;
+
     std::map<std::string, std::pair<Argument, size_t>> possible_arguments;
-    std::unordered_map<char, std::string> flag_shortcuts;
-    std::map<std::string, Flag> possible_flags;
+    std::map<std::string, NamedArgOrFlag> possible_named_args_and_flags;
+    std::unordered_map<char, std::string> shortcuts;
+
     std::string program_name;
     std::vector<std::string> arguments;
+    std::unordered_map<std::string, std::string> named_arguments;
     std::unordered_set<std::string> flags;
   };
 }

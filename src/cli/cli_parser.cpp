@@ -33,8 +33,9 @@ CLI::CLIParser::CLIParser(
   // Parse options into internal data structures. Throw a
   //  ParseException if there are repeated options, arguments, etc.
   for (const auto &option_variant : options) {
-    std::visit([=](auto &&option) {
+    std::visit([this](auto &&option) {
       using OptionT = std::decay_t<decltype(option)>;
+
       if constexpr (std::is_same_v<OptionT, Argument>) {
         if (!possible_arguments.insert({
             option.internal_name,
@@ -43,14 +44,17 @@ CLI::CLIParser::CLIParser(
           throw ParseException("Repeated argument " + option.internal_name);
         }
       }
-      else if constexpr (std::is_same_v<OptionT, Flag>) {
-        if (!possible_flags.insert({option.full_name, option}).second) {
+      else if constexpr (
+        std::is_same_v<OptionT, Flag> ||
+        std::is_same_v<OptionT, NamedArgument>
+      ) {
+        if (!possible_named_args_and_flags.insert({
+              option.full_name,
+              NamedArgOrFlag(option)
+            }).second) {
           throw ParseException("Repeated option " + option.full_name);
         }
-        if (!flag_shortcuts.insert({
-          option.shortcut,
-          option.full_name
-        }).second) {
+        if (!shortcuts.insert({option.shortcut, option.full_name}).second) {
           throw ParseException(
             std::string("Repeated option shortcut ") + option.shortcut
           );
@@ -80,30 +84,57 @@ CLI::CLIParser::CLIParser(
     else {
       assert(argument.length() > 1);
       assert(argument[0] == '-');
+
+      std::string option_name;
+
       if (argument[1] == '-') {
         // Option begins with --
         assert(argument.length() > 2);
-        auto flag_name = argument.substr(2);
-        if (possible_flags.find(flag_name) == possible_flags.end()) {
-          throw ParseException("Unknown flag " + argument);
-        }
-        if (!flags.emplace(std::move(flag_name)).second) {
-          throw ParseException("Repeated flag " + argument);
-        }
+        option_name = argument.substr(2);
       }
       else {
         // Option begins with -
-        for (size_t i = 1; i < argument.length(); ++i) {
-          char shortcut = argument[i];
-          auto it = flag_shortcuts.find(shortcut);
-          if (it == flag_shortcuts.end()) {
-            throw ParseException(std::string("Unknown flag -") + shortcut);
+        for (size_t j = 1; j < argument.length(); ++j) {
+          char shortcut = argument[j];
+          auto it = shortcuts.find(shortcut);
+          if (it == shortcuts.end()) {
+            throw ParseException(std::string("Unknown option -") + shortcut);
           }
-          if (!flags.insert(it->second).second) {
-            throw ParseException("Repeated flag --" + it->second);
-          }
+          option_name = it->second;
         }
       }
+
+      auto it = possible_named_args_and_flags.find(option_name);
+      if (it == possible_named_args_and_flags.end()) {
+        throw ParseException("Unknown option " + argument);
+      }
+
+      std::visit([&](auto &&option) {
+        using OptionT = std::decay_t<decltype(option)>;
+
+        if constexpr (std::is_same_v<OptionT, Flag>) {
+          // Handle a flag
+          if (!flags.emplace(std::move(option_name)).second) {
+            throw ParseException("Repeated flag " + argument);
+          }
+        } else if constexpr (std::is_same_v<OptionT, NamedArgument>) {
+          // Handle a named argument
+          ++i;
+          if (i >= argc) {
+            throw ParseException("No argument given with --" + option_name);
+          }
+
+          auto value = argv[i];
+          if (!named_arguments.emplace(
+                std::move(option_name),
+                std::move(value)
+              ).second) {
+            throw ParseException("Repeated argument " + argument);
+          }
+        } else {
+          static_assert(false_v<OptionT>, "Unexpected CLI option variant");
+        }
+      }, it->second);
     }
   }
 }
@@ -128,17 +159,35 @@ std::optional<std::string_view> CLI::CLIParser::get_argument(
 
 std::ostream &CLI::CLIParser::show_help(std::ostream &out) {
   out << "Usage: " << program_name;
-  for (const auto &pair : possible_flags) {
-    out << " [--" << pair.first << ']';
+  for (const auto &pair : possible_named_args_and_flags) {
+    if (const auto *named_arg = std::get_if<NamedArgument>(&pair.second)) {
+      out << " [--" << pair.first << ' ' << named_arg->value_description;
+      out << ']';
+    } else {
+      out << " [--" << pair.first << ']';
+    }
   }
   for (const auto &pair : possible_arguments) {
     out << " [" << pair.second.first.help_name << ']';
   }
   out << '\n';
-  for (const auto &pair : possible_flags) {
-    const auto &flag = pair.second;
-    out << "\t--" << flag.full_name << ", -" << flag.shortcut << ": ";
-    out << flag.description << '\n';
+  for (const auto &pair : possible_named_args_and_flags) {
+    std::visit([&out](auto &&option) {
+      using OptionT = std::decay_t<decltype(option)>;
+
+      out << "\t--" << option.full_name;
+      if constexpr (std::is_same_v<OptionT, NamedArgument>) {
+        out << ' ' << option.value_description;
+      }
+
+      out << ", -" << option.shortcut;
+      if constexpr (std::is_same_v<OptionT, NamedArgument>) {
+        out << ' ' << option.value_description;
+      }
+      out << ": ";
+
+      out << option.description << '\n';
+    }, pair.second);
   }
   for (const auto &pair : possible_arguments) {
     const auto &argument = pair.second.first;
