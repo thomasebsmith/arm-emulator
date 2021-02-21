@@ -35,6 +35,10 @@ $ ./build/release/disassembler <args>
 $ ./build/release/emulator <args>
 ```
 
+## Architecture
+An overview of the architecture of this project can be found at
+[ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ## Issues
 If you find a bug in this program or if you have a feature suggestion, create
 a GitHub issue
