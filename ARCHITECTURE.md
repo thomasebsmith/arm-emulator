@@ -17,7 +17,9 @@ Here is an overview of the subdirectories of `src/`:
  - `disassemble`: Contains code for converting a stream of bits into a series
           of instructions.
  - `instructions`: Contains all instruction-specific code (disassembling,
-          emulating, etc).
+          emulating, etc). Generally, there is one .cpp file per instruction
+          type. This may be refactored at some point to avoid having too many
+          files in one directory.
  - `meta`: Contains code that provides information about the project as a
           whole (e.g. authors, copyright, etc.).
  - `utils`: Contains utility classes and functions. Currently, this only
